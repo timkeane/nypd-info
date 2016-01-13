@@ -1,5 +1,7 @@
 var GEOCLIENT_URL = 'https://maps.nyc.gov/geoclient/v1/search.json?';
 
+var AUTO_LOCATE = true;
+
 var PRECINCT_NAME_LOOKUP = {
 	'14': 'Manhattan South Precinct',
 	'18': 'Manhattan North Precinct',
@@ -8,36 +10,48 @@ var PRECINCT_NAME_LOOKUP = {
 
 var map, precinctSource, precinctHouseSource, selectionSource;
 
-function getPrecinctHouse(pct){
-	var precinctHouse;
-	$.each(precinctHouseSource.getFeatures(), function(_, f){
+function getFeatureByPrecinct(pct, source){
+	var feature;
+	$.each(source.getFeatures(), function(_, f){
 		if (f.get('PRECINCT') == pct){
-			precinctHouse = f;
+			feature = f;
 		}
 	});
-	return precinctHouse;
+	return feature;
+};
+
+function getPrecinct(pct){
+	return getFeatureByPrecinct(pct, precinctSource);
+};
+
+function getPrecinctHouse(pct){
+	return getFeatureByPrecinct(pct, precinctHouseSource);
 };
 
 function located(location){
 	var precinctFeature = precinctSource.getFeaturesAtCoordinate(location.coordinates)[0];
-	selectionSource.clear();
 	if (precinctFeature){
-		var view = map.getView(), 
-			geom = precinctFeature.getGeometry(), 
-			pct = precinctFeature.get('PRECINCT')
-			houseFeature = getPrecinctHouse(pct);
-		map.beforeRender(
-			ol.animation.zoom({resolution: view.getResolution()}), 
-			ol.animation.pan({source: view.getCenter()})
-		);
-		selectionSource.addFeature(precinctFeature);
-		selectionSource.addFeature(houseFeature);
-		view.fit(geom.getExtent(), map.getSize());
-		console.info('Your precinct: ' + pct);
-		console.info('Your precinct house: ', houseFeature.getProperties());
+		zoomToPrecinct(precinctFeature);
 	}else{
 		console.warn('Where are you?');
 	}
+};
+
+function zoomToPrecinct(precinctFeature){
+	selectionSource.clear();
+	var view = map.getView(), 
+		geom = precinctFeature.getGeometry(), 
+		pct = precinctFeature.get('PRECINCT')
+		houseFeature = getPrecinctHouse(pct);
+	map.beforeRender(
+		ol.animation.zoom({resolution: view.getResolution()}), 
+		ol.animation.pan({source: view.getCenter()})
+	);
+	selectionSource.addFeature(precinctFeature);
+	selectionSource.addFeature(houseFeature);
+	view.fit(geom.getExtent(), map.getSize());
+	console.info('Your precinct: ' + pct);
+	console.info('Your precinct house: ', houseFeature.getProperties());
 };
 
 function getOrdinal(n) {
@@ -98,7 +112,7 @@ $(document).ready(function(){
 	);
 	
 	var locationMgr = new nyc.LocationMgr({
-		autoLocate: true,
+		autoLocate: AUTO_LOCATE && !window.SHOW_PRECINCT,
 		controls: new nyc.ol.control.ZoomSearch(map),
 		locate: new nyc.ol.Locate(
 			new nyc.Geoclient(GEOCLIENT_URL),
@@ -138,4 +152,12 @@ $(document).ready(function(){
 		}
 	}]);
 
+	if (window.SHOW_PRECINCT) {
+		var interval = setInterval(function(){
+			if (precinctSource.getFeatures().length && precinctHouseSource.getFeatures().length) {
+				zoomToPrecinct(getPrecinct(window.SHOW_PRECINCT));
+				clearInterval(interval);
+			}	
+		}, 200);
+	}
 });
