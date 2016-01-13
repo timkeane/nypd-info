@@ -10,7 +10,7 @@ var PRECINCT_NAME_LOOKUP = {
 
 var map, precinctSource, precinctHouseSource, selectionSource;
 
-function getFeatureByPrecinct(pct, source){
+function getFeature(pct, source){
 	var feature;
 	$.each(source.getFeatures(), function(_, f){
 		if (f.get('PRECINCT') == pct){
@@ -21,11 +21,11 @@ function getFeatureByPrecinct(pct, source){
 };
 
 function getPrecinct(pct){
-	return getFeatureByPrecinct(pct, precinctSource);
+	return getFeature(pct, precinctSource);
 };
 
 function getPrecinctHouse(pct){
-	return getFeatureByPrecinct(pct, precinctHouseSource);
+	return getFeature(pct, precinctHouseSource);
 };
 
 function located(location){
