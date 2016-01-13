@@ -100,7 +100,7 @@ $(document).ready(function(){
 					st = this.get('STREET'),
 					boro = this.get('BORO'),
 					zip = this.get('ZIP');
-				return num + ' ' + suf + ' ' + st + '<br>' + boro + ' ' + zip;  
+				return num + ' ' + suf + ' ' + st + '<br>' + boro + ', NY ' + zip;  
 			}
 		}]
 	);	
