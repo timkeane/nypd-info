@@ -1,0 +1,26 @@
+#map {
+	left: 50px;
+	top: 50px;
+	position: absolute;
+	width: 600px;
+	height: 600px;
+	padding: 0;
+	margin: 0;
+}
+#map * {
+	color: #085095;
+}
+.ctl-btn.ui-btn, .ctl-btn.ui-btn:visited {
+    background-color: rgba(8,80,149,0.5);
+}
+.ctl-btn.ui-btn:hover {
+    background-color: #085095;
+}
+.feature-tip {
+	padding: 5px;
+	font-weight: bold;
+	max-width: 200px;
+}
+.feature-tip.precinct-house {
+	font-weight: normal;
+}
