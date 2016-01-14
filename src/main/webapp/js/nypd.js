@@ -3,9 +3,9 @@ var GEOCLIENT_URL = 'https://maps.nyc.gov/geoclient/v1/search.json?';
 var AUTO_LOCATE = true;
 
 var PRECINCT_NAME_LOOKUP = {
-	'14': 'Manhattan South Precinct',
-	'18': 'Manhattan North Precinct',
-	'22': 'Central Park Precinct'
+	'14': 'Manhattan South',
+	'18': 'Manhattan North',
+	'22': 'Central Park'
 };
 
 var map, precinctSource, precinctHouseSource, selectionSource, showPrecinct = false;
@@ -90,7 +90,7 @@ $(document).ready(function(){
 		[{
 			getName: function(){
 				var pct = this.get('PRECINCT'), name = PRECINCT_NAME_LOOKUP[pct];
-				return name || (getOrdinal(pct) + ' Precinct');
+				return (name || getOrdinal(pct)) + ' Precinct';
 			}
 		}]
 	);	
@@ -104,7 +104,7 @@ $(document).ready(function(){
 		[{
 			getName: function(){
 				var pct = this.get('PRECINCT'), name = PRECINCT_NAME_LOOKUP[pct];
-				return (name || (getOrdinal(pct) + ' Precinct')) + ' Hosue';
+				return (name || getOrdinal(pct)) + ' Precinct Hosue';
 			},
 			getAddress: function(){
 				var num = this.get('NUM'), 
