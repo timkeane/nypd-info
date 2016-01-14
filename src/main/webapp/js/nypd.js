@@ -8,7 +8,12 @@ var PRECINCT_NAME_LOOKUP = {
 	'22': 'Central Park Precinct'
 };
 
-var map, precinctSource, precinctHouseSource, selectionSource;
+var map, precinctSource, precinctHouseSource, selectionSource, showPrecinct = false;
+
+var qstr = document.location.search;
+if (qstr){
+	showPrecinct = qstr.split('=')[1];
+};
 
 function getFeature(pct, source){
 	var feature;
@@ -112,7 +117,7 @@ $(document).ready(function(){
 	);
 	
 	var locationMgr = new nyc.LocationMgr({
-		autoLocate: AUTO_LOCATE && !window.SHOW_PRECINCT,
+		autoLocate: AUTO_LOCATE && !showPrecinct,
 		controls: new nyc.ol.control.ZoomSearch(map),
 		locate: new nyc.ol.Locate(
 			new nyc.Geoclient(GEOCLIENT_URL),
@@ -152,10 +157,10 @@ $(document).ready(function(){
 		}
 	}]);
 
-	if (window.SHOW_PRECINCT) {
+	if (showPrecinct) {
 		var interval = setInterval(function(){
 			if (precinctSource.getFeatures().length && precinctHouseSource.getFeatures().length) {
-				zoomToPrecinct(getPrecinct(window.SHOW_PRECINCT));
+				zoomToPrecinct(getPrecinct(showPrecinct));
 				clearInterval(interval);
 			}	
 		}, 200);

@@ -44,8 +44,8 @@ var STYLE = {
 		if (!STYLE.precinctHouseStyleCache){
 			STYLE.precinctHouseStyleCache = [new ol.style.Style({
 				image: new ol.style.Icon({
-					scale: 40 / 100,
-					src: 'img/nypd.png'
+					scale: 24 / 512,
+					src: 'img/nypd' + (nyc.util.isIe() ? '.png' : '.svg')
 				})
 			})];
 		}
@@ -54,10 +54,10 @@ var STYLE = {
 	selectionStyle: function(feature, resolution){
 		if (feature.getGeometry().getType() == 'Point'){
 			if (!STYLE.selectionStyleCache.point){
-				STYLE.selectionStyleCache.point = [new ol.style.Style({
-					image: new ol.style.Circle({
-						radius: 22,
-						stroke: new ol.style.Stroke({color: '#fff', width: 3})
+				STYLE.selectionStyleCache.point =  [new ol.style.Style({
+					image: new ol.style.Icon({
+						scale: 48 / 512,
+						src: 'img/nypd-selected' + (nyc.util.isIe() ? '.png' : '.svg')
 					})
 				})];
 			}
