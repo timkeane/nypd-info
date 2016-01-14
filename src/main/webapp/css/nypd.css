@@ -19,7 +19,7 @@ html, body, .ui-mobile-viewport div[data-role="page"], #map {
 	padding: 5px;
 	font-weight: bold;
 	max-width: 220px;
-	opacity: 0.9;
+	background-color:rgba(255,255,255,0.9);
 }
 .feature-tip.precinct-house {
 	font-weight: normal;

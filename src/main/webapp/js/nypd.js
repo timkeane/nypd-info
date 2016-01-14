@@ -13,6 +13,12 @@ var map, precinctSource, precinctHouseSource, selectionSource, showPrecinct = fa
 var qstr = document.location.search;
 if (qstr){
 	showPrecinct = qstr.split('=')[1];
+	var interval = setInterval(function(){
+		if (precinctSource.getFeatures().length) {
+			zoomToPrecinct(getPrecinct(showPrecinct));
+			clearInterval(interval);
+		}	
+	}, 200);
 };
 
 function getFeature(pct, source){
@@ -55,8 +61,9 @@ function zoomToPrecinct(precinctFeature){
 	selectionSource.addFeature(precinctFeature);
 	selectionSource.addFeature(houseFeature);
 	view.fit(geom.getExtent(), map.getSize());
-	console.info('Your precinct: ' + pct);
-	console.info('Your precinct house: ', houseFeature.getProperties());
+	if (window.parent && window.parent.gotPrecinctHouse){
+		window.parent.gotPrecinctHouse(houseFeature.getProperties());
+	}
 };
 
 function getOrdinal(n){
@@ -157,12 +164,4 @@ $(document).ready(function(){
 		}
 	}]);
 
-	if (showPrecinct) {
-		var interval = setInterval(function(){
-			if (precinctSource.getFeatures().length && precinctHouseSource.getFeatures().length) {
-				zoomToPrecinct(getPrecinct(showPrecinct));
-				clearInterval(interval);
-			}	
-		}, 200);
-	}
 });

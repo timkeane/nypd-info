@@ -30,7 +30,7 @@ var STYLE = {
 	precinctStyle: function(feature, resolution){
 		var zoom = STYLE.getZoom(resolution);
 		if (!STYLE.precinctStyleCache[zoom]){
-			var width = [3, 3, 3, 6, 6, 6, 7, 7, 7, 7, 7][zoom];
+			var width = [1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3][zoom];
 			STYLE.precinctStyleCache[zoom] = [new ol.style.Style({
 				stroke: new ol.style.Stroke({
 					color: 'rgba(0,0,255,0.5)',
@@ -41,6 +41,7 @@ var STYLE = {
 		return STYLE.precinctStyleCache[zoom];
 	},
 	precinctHouseStyle: function(feature, resolution){
+		var zoom = STYLE.getZoom(resolution);
 		if (!STYLE.precinctHouseStyleCache){
 			STYLE.precinctHouseStyleCache = [new ol.style.Style({
 				image: new ol.style.Icon({
@@ -49,14 +50,14 @@ var STYLE = {
 				})
 			})];
 		}
-		return STYLE.precinctHouseStyleCache;
+		return zoom > 2 ? STYLE.precinctHouseStyleCache : [];
 	},
 	selectionStyle: function(feature, resolution){
 		if (feature.getGeometry().getType() == 'Point'){
 			if (!STYLE.selectionStyleCache.point){
 				STYLE.selectionStyleCache.point =  [new ol.style.Style({
 					image: new ol.style.Icon({
-						scale: 48 / 512,
+						scale: 32 / 512,
 						src: 'img/nypd-selected' + (nyc.util.isIe() ? '.png' : '.svg')
 					})
 				})];
@@ -67,6 +68,12 @@ var STYLE = {
 			if (!STYLE.selectionStyleCache.polygon[zoom]){
 				var width = [1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3][zoom];
 				STYLE.selectionStyleCache.polygon[zoom] = [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: 'rgb(0,0,255)',
+						width: 5
+					})
+				}),
+				new ol.style.Style({
 					stroke: new ol.style.Stroke({
 						color: '#fff',
 						width: width
