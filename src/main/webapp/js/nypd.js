@@ -104,7 +104,7 @@ $(document).ready(function(){
 		[{
 			getName: function(){
 				var pct = this.get('PRECINCT'), name = PRECINCT_NAME_LOOKUP[pct];
-				return name || (getOrdinal(pct) + ' Precinct Hosue');
+				return (name || (getOrdinal(pct) + ' Precinct')) + ' Hosue';
 			},
 			getAddress: function(){
 				var num = this.get('NUM'), 
