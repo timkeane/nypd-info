@@ -1,7 +1,5 @@
 var GEOCLIENT_URL = 'https://maps.nyc.gov/geoclient/v1/search.json?';
 
-var AUTO_LOCATE = true;
-
 var PRECINCT_NAME_LOOKUP = {
 	'14': 'Manhattan South',
 	'18': 'Manhattan North',
@@ -124,7 +122,6 @@ $(document).ready(function(){
 	);
 	
 	var locationMgr = new nyc.LocationMgr({
-		autoLocate: AUTO_LOCATE && !showPrecinct,
 		controls: new nyc.ol.control.ZoomSearch(map),
 		locate: new nyc.ol.Locate(
 			new nyc.Geoclient(GEOCLIENT_URL),
