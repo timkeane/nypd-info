@@ -24,3 +24,9 @@ html, body, .ui-mobile-viewport div[data-role="page"], #map {
 .feature-tip.precinct-house {
 	font-weight: normal;
 }
+#fld-srch-container .ui-input-clear:after {
+    background-color: rgba(8,80,149,0.5);
+}
+#fld-srch-container .ui-input-clear:hover:after {
+    background-color: #085095;
+}
