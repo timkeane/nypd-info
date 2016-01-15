@@ -19,6 +19,15 @@ if (qstr){
 	}, 200);
 };
 
+function mapClicked(event){
+	map.forEachFeatureAtPixel(event.pixel, function(feature, layer){
+		var pct = feature.get('PRECINCT');
+		if (pct){
+			window.parent.clickedPrecinct(pct);
+		}
+	});
+};
+
 function getFeature(pct, source){
 	var feature;
 	$.each(source.getFeatures(), function(_, f){
@@ -140,6 +149,8 @@ $(document).ready(function(){
 
 	locationMgr.on(nyc.Locate.EventType.GEOCODE, located);
 	locationMgr.on(nyc.Locate.EventType.GEOLOCATION, located);
+
+	map.on('click', mapClicked);
 
 	new nyc.ol.FeatureTip(map, [{
 		source: precinctSource, 
