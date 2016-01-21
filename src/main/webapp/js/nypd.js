@@ -71,7 +71,8 @@ function zoomToPrecinct(precinctFeature){
 	}
 	view.fit(geom.getExtent(), map.getSize());
 	if (window.parent && window.parent.gotPrecinctHouse){
-		window.parent.gotPrecinctHouse(houseFeature.getProperties());
+		var props = houseFeature ? houseFeature.getProperties() : {PRECINCT: pct};
+		window.parent.gotPrecinctHouse(props);
 	}
 };
 
