@@ -66,7 +66,9 @@ function zoomToPrecinct(precinctFeature){
 		ol.animation.pan({source: view.getCenter()})
 	);
 	selectionSource.addFeature(precinctFeature);
-	selectionSource.addFeature(houseFeature);
+	if (houseFeature){
+		selectionSource.addFeature(houseFeature);
+	}
 	view.fit(geom.getExtent(), map.getSize());
 	if (window.parent && window.parent.gotPrecinctHouse){
 		window.parent.gotPrecinctHouse(houseFeature.getProperties());
