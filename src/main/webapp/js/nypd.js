@@ -1,8 +1,8 @@
 var GEOCLIENT_URL = 'https://maps.nyc.gov/geoclient/v1/search.json?';
 
 var PRECINCT_NAME_LOOKUP = {
-	'14': 'Manhattan South',
-	'18': 'Manhattan North',
+	'14': 'Midtown South',
+	'18': 'Midtown North',
 	'22': 'Central Park'
 };
 
