@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
- 	
- 	<title>NYPD Thing</title>
-
-	<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.12.1/ol.css">
-	<link rel="stylesheet" href="https://maps.nyc.gov/nyc-lib/v0.1.0/css/nyc-ol-lib.css">
-	<link rel="stylesheet" href="css/nypd.css"> 
-
-	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.12/proj4.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.12.1/ol.js"></script>    
+	<meta charset="utf-8">
+ 	<title>NYPD Precinct Finder</title>
+ 	<style>
+ 		iframe {
+ 			position: absolute;
+ 			left: 20px;
+ 			top: 20px;
+ 			width: 500px;
+ 			height: 500px;
+ 			border: none;
+ 		}
+ 	</style>
+ 	<script>
+		function gotPrecinctHouse(precinctHouse){
+ 			console.info('gotPrecinctHouse:', precinctHouse);
+ 		};
+ 		function clickedPrecinct(precinct){
+ 			console.info('clickedPrecinct:', precinct);
+ 		};
+ 	</script>
 </head>
 <body>
-	<div id="map"></div>
-	<script src="https://maps.nyc.gov/nyc-lib/v0.1.0/js/nyc-ol-lib.js"></script>
-	<script src="js/style.js"></script>
-	<script src="js/nypd.js"></script>
+	<iframe src="data/find-your-precinct.html?precinct=1"></iframe>
 </body>
 </html>

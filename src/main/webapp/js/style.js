@@ -1,44 +1,38 @@
+var PRECINCT_COLOR = 'rgba(0,0,255,0.5)';
+var PRECINCT_SELECTION_COLOR = 'rgba(0,0,255,1)';
+var SECTOR_COLOR = 'rgba(0,0,255,0.2)';
+var SECTOR_SELECTION_COLOR = 'rgba(0,0,255,0.1)';
+
 var STYLE = {
-	locationStyleCache: null,
-	precinctStyleCache: {},
-	selectionStyleCache: {polygon: {}},
 	precinctHouseStyleCache: null,
+	pointSelectionStyleCache: null,
+	polygonStyleCache: {},
+	polygonSelectionStyleCache: {},
 	getZoom: function(resolution){
-		var resolutions = nyc.ol.layer.BaseLayer.RESOLUTIONS, zoom = resolutions.indexOf(resolution);
-		if (zoom == -1) {
-			for (var z = 0; z < resolutions.length; z++){
-				if (resolution > resolutions[z]){
-					zoom = z;
-					break;
-				}
-			}
-		}
-		return zoom > -1 ? zoom : resolutions.length - 1;	
+		return nyc.ol.TILE_GRID.getZForResolution(resolution);
 	},
-	locationStyle: function(feature, resolution){
-		if (!STYLE.locationStyleCache){
-			var opts = {scale: 48 / 512, src: 'img/me0' + (nyc.util.isIe() ? '.png' : '.svg')};
-			if (!nyc.util.isIos()){
-				opts.offset = [0, 24];
-			}
-			STYLE.locationStyleCache = [new ol.style.Style({
-				image: new ol.style.Icon(opts)
-			})];
-		}
-		return STYLE.locationStyleCache;
-	},
-	precinctStyle: function(feature, resolution){
-		var zoom = STYLE.getZoom(resolution);
-		if (!STYLE.precinctStyleCache[zoom]){
+	polygonStyle: function(feature, zoom, color){
+		STYLE.polygonStyleCache[zoom] = STYLE.polygonStyleCache[zoom] || {};
+		if (!STYLE.polygonStyleCache[zoom][color]){
 			var width = [1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3][zoom];
-			STYLE.precinctStyleCache[zoom] = [new ol.style.Style({
+			STYLE.polygonStyleCache[zoom][color] = [new ol.style.Style({
 				stroke: new ol.style.Stroke({
-					color: 'rgba(0,0,255,0.5)',
+					color: color,
 					width: width
 				})
 			})];
 		}
-		return STYLE.precinctStyleCache[zoom];
+		return STYLE.polygonStyleCache[zoom][color];
+	},
+	precinctStyle: function(feature, resolution){
+		return STYLE.polygonStyle(feature, STYLE.getZoom(resolution), PRECINCT_COLOR);
+	},
+	sectorStyle: function(feature, resolution){
+		var zoom = STYLE.getZoom(resolution);
+		if (zoom < 11){
+			return [];
+		}
+		return STYLE.polygonStyle(feature, zoom, SECTOR_COLOR);
 	},
 	precinctHouseStyle: function(feature, resolution){
 		var zoom = STYLE.getZoom(resolution);
@@ -46,31 +40,45 @@ var STYLE = {
 			STYLE.precinctHouseStyleCache = [new ol.style.Style({
 				image: new ol.style.Icon({
 					scale: 24 / 512,
-					src: 'img/nypd' + (nyc.util.isIe() ? '.png' : '.svg')
+					imgSize: [512, 512],
+					src: '../images/content/pages/nypd.svg'
 				})
 			})];
 		}
-		return zoom > 2 ? STYLE.precinctHouseStyleCache : [];
+		return zoom > 15 ? STYLE.precinctHouseStyleCache : [];
 	},
 	selectionStyle: function(feature, resolution){
 		if (feature.getGeometry().getType() == 'Point'){
-			if (!STYLE.selectionStyleCache.point){
-				STYLE.selectionStyleCache.point =  [new ol.style.Style({
+			return STYLE.pointSelectionStyle(feature, resolution);
+		}
+		return STYLE.polygonSelectionStyle(feature, resolution);
+	},
+	pointSelectionStyle: function(feature, resolution){
+		if (feature.getGeometry().getType() == 'Point'){
+			if (!STYLE.pointSelectionStyleCache){
+				STYLE.pointSelectionStyleCache =  [new ol.style.Style({
 					image: new ol.style.Icon({
 						scale: 32 / 512,
-						src: 'img/nypd-selected' + (nyc.util.isIe() ? '.png' : '.svg')
+						imgSize: [512, 512],
+						src: '../images/content/pages/nypd-selected.svg'
 					})
 				})];
 			}
-			return STYLE.selectionStyleCache.point;
-		}else{
-			var zoom = STYLE.getZoom(resolution);
-			if (!STYLE.selectionStyleCache.polygon[zoom]){
-				var width = [1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3][zoom];
-				STYLE.selectionStyleCache.polygon[zoom] = [new ol.style.Style({
+			return STYLE.pointSelectionStyleCache;
+		}
+	},
+	polygonSelectionStyle: function(feature, resolution){
+		var zoom = STYLE.getZoom(resolution),
+			type = feature.getName ? 'precinct' : 'sector';
+		STYLE.polygonSelectionStyleCache[zoom] = STYLE.polygonSelectionStyleCache[zoom] || {};
+
+		if (!STYLE.polygonSelectionStyleCache[zoom][type]){
+			if (type == 'precinct'){
+				var width = [1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3][zoom - 8];
+				STYLE.polygonSelectionStyleCache[zoom][type] = [new ol.style.Style({
 					stroke: new ol.style.Stroke({
-						color: 'rgb(0,0,255)',
-						width: 5
+						color: PRECINCT_SELECTION_COLOR,
+						width: 7
 					})
 				}),
 				new ol.style.Style({
@@ -79,8 +87,14 @@ var STYLE = {
 						width: width
 					})
 				})];
+			}else{
+				STYLE.polygonSelectionStyleCache[zoom][type] = [new ol.style.Style({
+					fill: new ol.style.Fill({
+						color: SECTOR_SELECTION_COLOR
+					})
+				})];
 			}
-			return STYLE.selectionStyleCache.polygon[zoom];
 		}
+		return STYLE.polygonSelectionStyleCache[zoom][type];
 	}
 };
