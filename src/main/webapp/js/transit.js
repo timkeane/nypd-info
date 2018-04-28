@@ -16,6 +16,7 @@ if (qstr){
 			features: stationSource.getFeatures(),
 			nameField: 'NAME'
 		});
+		$(controls.input).attr('placeholder', 'Search for a station or address...');
 	}, 200);
 };
 
