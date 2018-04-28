@@ -98,7 +98,6 @@ $(document).ready(function(){
 		locator: new nyc.ol.Locator({map: map})
 	});
 	locationMgr.on(nyc.Locate.EventType.GEOCODE, located);
-	locationMgr.on(nyc.Locate.EventType.GEOLOCATION, located);
 
 	sectorSource = new ol.source.Vector({
 		url: 'sector.json',

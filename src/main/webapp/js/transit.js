@@ -1,14 +1,21 @@
-var map, stationSource, stationLayer, lineSource, lineLayer, selectionSource, selectionLayer, showSector = false;
+var GEOCLIENT_URL = 'https://maps.nyc.gov/geoclient/v1/search.json?app_key=E2857975AA57366BC&app_id=nyc-gov-nypd';
+
+var map, controls, stationSource, stationLayer, lineSource, lineLayer, selectionSource, selectionLayer, showSector = false;
 
 var qstr = document.location.search;
 if (qstr){
 	var search = location.search.substring(1);
 	showSector = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
 	var interval = setInterval(function(){
-		if (stationSource.getFeatures().length) {
+		if (stationSource && stationSource.getFeatures().length) {
 			zoomToSector(getStations(showSector));
 			clearInterval(interval);
 		}
+		controls.setFeatures({
+			featureTypeName: 'subway',
+			features: stationSource.getFeatures(),
+			nameField: 'NAME'
+		});
 	}, 200);
 };
 
@@ -36,6 +43,8 @@ $(document).ready(function(){
 
 	map = new nyc.ol.Basemap({target: $('#map').get(0)});
 
+	controls = new nyc.ol.control.ZoomSearch(map);
+
 	lineSource = new ol.source.Vector({
 		url: 'subway-line.json',
 		format: new ol.format.TopoJSON
@@ -55,7 +64,27 @@ $(document).ready(function(){
 	    yCol: 'Y',
 	    fidCol: 'STATION_ID'
 	  })},
-	  [],
+	  [{
+			html: function(){
+				var html = $('<div></div>');
+				var div = $('<div class="sta-name"></div>');
+				div.append(this.get('NAME'));
+				html.append(div);
+				var lines = this.get('LINE').split(',');
+				$.each(lines, function(){
+					var div = $('<div class="sta-icon"></div>');
+					div.html(this).addClass('sta-' + this);
+					html.append(div);
+				});
+				var sector = $('<button class="sector" role="buton"></button>');
+				sector.append('District ' + this.get('DISTRICT'))
+					.append(' Sector ' + this.get('SECTOR'))
+					.click(function(){
+						window.parent.clickedStation(this.getProperties());
+					});
+				return html.append(sector).trigger('create');
+			}
+		}],
 	  {projection: 'EPSG:3857'}
 	);
 	stationLayer = new ol.layer.Vector({source: stationSource, style: STYLE.station});
@@ -64,8 +93,50 @@ $(document).ready(function(){
 	new nyc.ol.FeatureTip(map, [{
 		layer: stationLayer,
 		labelFunction: function(){
-			return {text: this.get('NAME')};
+			return {
+				css: 'subway',
+				text: this.html()
+			};
 		}
 	}]);
+
+	var popup = new nyc.ol.Popup(map);
+	function showPopup(feature){
+		popup.show({
+			coordinates: feature.getGeometry().getCoordinates(),
+			html: feature.html()
+		})
+	};
+
+	map.on('click', function(event){
+		map.forEachFeatureAtPixel(event.pixel, function(feature, layer){
+			if (layer === stationLayer){
+				showPopup(feature);
+			}
+		});
+	});
+
+	var geocoder = new nyc.Geoclient(GEOCLIENT_URL);
+	var locationMgr = new nyc.LocationMgr({
+		controls: controls,
+		locate: new nyc.ol.Locate(geocoder),
+		locator: new nyc.ol.Locator({
+			map: map,
+			style: new ol.style.Style({
+				image: new ol.style.Icon({
+					scale: 48 / 512,
+					size: [1024, 1024],
+					src: '../images/content/pages/icon.svg'
+				})
+			})
+		})
+	});
+	
+	locationMgr.on(nyc.Locate.EventType.GEOCODE, function(location){
+		var id = location.data.STATION_ID;
+		if (id){
+			showPopup(stationSource.getFeatureById(id));
+		}
+	});
 
 });

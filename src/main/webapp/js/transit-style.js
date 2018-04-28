@@ -53,7 +53,7 @@ var STYLE = {
 	},
 	selection: function(feature, resolution){
 		var zoom = STYLE.zoom(resolution),
-			radius = [4, 4, 8, 8, 8, 12, 16, 20, 24, 2, 48][zoom - 4];
+			radius = [6, 6, 10, 10, 10, 14, 18, 22, 26, 34, 50][zoom - 4];
 		if (!STYLE.selectionCache[zoom]){
 			STYLE.selectionCache[zoom] = new ol.style.Style({
 				image: new ol.style.Circle({
