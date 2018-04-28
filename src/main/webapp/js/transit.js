@@ -39,6 +39,31 @@ function zoomToSector(stations){
 	view.fit(stations.extent, {size: map.getSize(), duration: 500});
 };
 
+var stationDecorator = {
+	html: function(){
+		var html = $('<div></div>');
+		var div = $('<div class="sta-name"></div>');
+		div.append(this.get('NAME'));
+		html.append(div);
+		var lines = this.get('LINE').split(',');
+		$.each(lines, function(){
+			var div = $('<div class="sta-icon"></div>');
+			div.html(this).addClass('sta-' + this);
+			html.append(div);
+		});
+		var sector = this.get('SECTOR').trim()
+		var btn = $('<button class="sector" role="buton"></button>');
+		btn.append('District ' + this.get('DISTRICT'));
+		if (sector){
+			btn.append(' Sector ' + sector);
+		}
+		btn.click(function(){
+				window.parent.clickedStation(this.getProperties());
+			});
+		return html.append(btn).trigger('create');
+	}
+};
+
 $(document).ready(function(){
 
 	map = new nyc.ol.Basemap({target: $('#map').get(0)});
@@ -64,27 +89,7 @@ $(document).ready(function(){
 	    yCol: 'Y',
 	    fidCol: 'STATION_ID'
 	  })},
-	  [{
-			html: function(){
-				var html = $('<div></div>');
-				var div = $('<div class="sta-name"></div>');
-				div.append(this.get('NAME'));
-				html.append(div);
-				var lines = this.get('LINE').split(',');
-				$.each(lines, function(){
-					var div = $('<div class="sta-icon"></div>');
-					div.html(this).addClass('sta-' + this);
-					html.append(div);
-				});
-				var sector = $('<button class="sector" role="buton"></button>');
-				sector.append('District ' + this.get('DISTRICT'))
-					.append(' Sector ' + this.get('SECTOR'))
-					.click(function(){
-						window.parent.clickedStation(this.getProperties());
-					});
-				return html.append(sector).trigger('create');
-			}
-		}],
+	  [stationDecorator],
 	  {projection: 'EPSG:3857'}
 	);
 	stationLayer = new ol.layer.Vector({source: stationSource, style: STYLE.station});
