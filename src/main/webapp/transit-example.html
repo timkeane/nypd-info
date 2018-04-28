@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+ 	<title>NYPD Transit Sector Finder</title>
+ 	<style>
+ 		iframe {
+ 			position: absolute;
+ 			left: 20px;
+ 			top: 20px;
+ 			width: 500px;
+ 			height: 500px;
+ 			border: none;
+ 		}
+ 	</style>
+ 	<script>
+		function clickedStation(station){
+ 			console.info('clickedStation:', station);
+ 		};
+ 	</script>
+</head>
+<body>
+	<iframe src="data/find-transit-sector.html?district=12&sector=B"></iframe>
+</body>
+</html>

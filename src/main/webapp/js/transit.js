@@ -33,33 +33,36 @@ function getStations(sector){
 };
 
 function zoomToSector(stations){
-	var view = map.getView();
-	selectionSource.clear();
-	selectionSource.addFeatures(stations.features);
-	view.fit(stations.extent, {size: map.getSize(), duration: 500});
+	if (stations.features.length){
+		var view = map.getView();
+		selectionSource.clear();
+		selectionSource.addFeatures(stations.features);
+		view.fit(stations.extent, {size: map.getSize(), duration: 500});
+	}
 };
 
 var stationDecorator = {
 	html: function(){
+		var props = this.getProperties()
 		var html = $('<div></div>');
 		var div = $('<div class="sta-name"></div>');
-		div.append(this.get('NAME'));
+		div.append(props.NAME);
 		html.append(div);
-		var lines = this.get('LINE').split(',');
+		var lines = props.LINE.split(',');
 		$.each(lines, function(){
 			var div = $('<div class="sta-icon"></div>');
 			div.html(this).addClass('sta-' + this);
 			html.append(div);
 		});
-		var sector = this.get('SECTOR').trim()
+		var sector = props.SECTOR.trim()
 		var btn = $('<button class="sector" role="buton"></button>');
-		btn.append('District ' + this.get('DISTRICT'));
+		btn.append('District ' + props.DISTRICT);
 		if (sector){
 			btn.append(' Sector ' + sector);
 		}
 		btn.click(function(){
-				window.parent.clickedStation(this.getProperties());
-			});
+			window.parent.clickedStation(props);
+		});
 		return html.append(btn).trigger('create');
 	}
 };
