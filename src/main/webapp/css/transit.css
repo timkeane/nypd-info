@@ -9,6 +9,7 @@ html, body,
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 .ui-mobile-viewport .sta-name,
+.ui-mobile-viewport .nyc-user-location,
 .ui-mobile-viewport .sector,
 .ui-mobile-viewport .sector:hover {
   color: #085095;

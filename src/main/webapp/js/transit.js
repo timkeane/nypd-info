@@ -131,7 +131,7 @@ $(document).ready(function(){
 			})
 		})
 	});
-	
+
 	locationMgr.on(nyc.Locate.EventType.GEOCODE, function(location){
 		var id = location.data.STATION_ID;
 		if (id){
