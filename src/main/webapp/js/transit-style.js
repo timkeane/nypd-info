@@ -1,7 +1,6 @@
 var STYLE = {
 	stationCache: {},
 	lineCache: {},
-	selectionCache: {},
 	color: {
 		1: '#ff3433',
 		2: '#ff3433',
@@ -53,18 +52,43 @@ var STYLE = {
 	},
 	selection: function(feature, resolution){
 		var zoom = STYLE.zoom(resolution),
-			radius = [6, 6, 10, 10, 10, 14, 18, 22, 26, 34, 50][zoom - 4];
-		if (!STYLE.selectionCache[zoom]){
-			STYLE.selectionCache[zoom] = new ol.style.Style({
-				image: new ol.style.Circle({
-					radius: radius,
+			radius = [6, 6, 10, 10, 10, 14, 18, 22, 26, 34, 50][zoom - 4],
+			text;
+		var circle = new ol.style.Style({
+			image: new ol.style.Circle({
+				radius: radius,
+				fill: new ol.style.Fill({
+					color: 'rgba(255,255,0,0.8)'
+				})
+			})
+		});
+		if (zoom > 5){
+			var label = feature.get('NAME');
+			var offsetY = 0;
+			if (label.indexOf('/') > -1){
+				label = label.replace(/\//g, '-\n');
+				offsetY = 10;
+			}
+			text = new ol.style.Style({
+				text: new ol.style.Text({
+					text: label,
+					font: 'bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif',
+					textAlign: 'left',
+					textBaseline: 'top',
+					offsetX: 10,
+					offsetY: offsetY,
 					fill: new ol.style.Fill({
-						color: 'rgba(255,255,0,0.8)'
+						color: '#085095'
+					}),
+					stroke: new ol.style.Stroke({
+						width: 5,
+						color: feature.selected ? '#ffff00' : '#fff'
 					})
 				})
 			});
+			return [text, circle, STYLE.station(feature, resolution)];
 		}
-		return STYLE.selectionCache[zoom];
+		return [circle, STYLE.station(feature, resolution)];
 	},
 	station: function(feature, resolution){
 		var zoom = STYLE.zoom(resolution),

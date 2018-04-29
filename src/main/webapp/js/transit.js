@@ -1,14 +1,13 @@
 var GEOCLIENT_URL = 'https://maps.nyc.gov/geoclient/v1/search.json?app_key=E2857975AA57366BC&app_id=nyc-gov-nypd';
 
-var map, controls, stationSource, stationLayer, lineSource, lineLayer, selectionSource, selectionLayer, showSector = false;
+var map, controls, stationSource, stationLayer, lineSource, lineLayer, selectionSource, selectionLayer, sationId = false;
 
 var qstr = document.location.search;
 if (qstr){
-	var search = location.search.substring(1);
-	showSector = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+	sationId = location.search.split('=')[1];
 	var interval = setInterval(function(){
 		if (stationSource && stationSource.getFeatures().length) {
-			zoomToSector(getStations(showSector));
+			zoomToSector(getStations(sationId));
 			clearInterval(interval);
 		}
 		controls.setFeatures({
@@ -20,16 +19,23 @@ if (qstr){
 	}, 200);
 };
 
-function getStations(sector){
+function getStations(sationId){
+	var station = stationSource.getFeatureById(sationId);
+	var sector = station.get('SECTOR');
+	var district = station.get('DISTRICT');
 	var features = [];
 	var extent = ol.extent.createEmpty();
 	$.each(stationSource.getFeatures(), function(){
 		var props = this.getProperties()
-		if (props.SECTOR == sector.sector && props.DISTRICT == sector.district){
+		if (sector && props.SECTOR == sector && props.DISTRICT == district){
 			features.push(this);
 			extent = ol.extent.extend(extent, this.getGeometry().getExtent())
 		}
 	});
+	if (!features.length){
+		features.push(station);
+	}
+	station.selected = true;
 	return {features: features, extent: extent}
 };
 
@@ -38,7 +44,14 @@ function zoomToSector(stations){
 		var view = map.getView();
 		selectionSource.clear();
 		selectionSource.addFeatures(stations.features);
-		view.fit(stations.extent, {size: map.getSize(), duration: 500});
+		if (stations.features.length > 1){
+			view.fit(stations.extent, {size: map.getSize(), duration: 500});
+		}else{
+			view.animate({
+				center: stations.features[0].getGeometry().getCoordinates(),
+				zoom: 16
+			});
+		}
 	}
 };
 
@@ -81,10 +94,6 @@ $(document).ready(function(){
 	lineLayer = new ol.layer.Vector({source: lineSource, style: STYLE.line});
 	map.addLayer(lineLayer);
 
-	selectionSource = new ol.source.Vector({});
-	selectionLayer = new ol.layer.Vector({source: selectionSource, style: STYLE.selection});
-	map.addLayer(selectionLayer);
-
 	stationSource = new nyc.ol.source.Decorating(
 	  {loader: new nyc.ol.source.CsvPointFeatureLoader({
 	    url: 'subway-station.csv',
@@ -98,6 +107,10 @@ $(document).ready(function(){
 	);
 	stationLayer = new ol.layer.Vector({source: stationSource, style: STYLE.station});
 	map.addLayer(stationLayer);
+
+	selectionSource = new ol.source.Vector({});
+	selectionLayer = new ol.layer.Vector({source: selectionSource, style: STYLE.selection});
+	map.addLayer(selectionLayer);
 
 	new nyc.ol.FeatureTip(map, [{
 		layer: stationLayer,
