@@ -6,9 +6,6 @@
  	<title>NYPD Transit Sector Finder</title>
  	<style>
  		iframe {
- 			position: absolute;
- 			left: 20px;
- 			top: 20px;
  			width: 500px;
  			height: 500px;
  			border: none;
@@ -21,6 +18,8 @@
  	</script>
 </head>
 <body>
-	<iframe src="data/find-transit-sector.html?station=430"></iframe>
+	<iframe id="map" src="data/find-transit-sector.html"></iframe>
+	<br>Station <input id="input" value="430">
+	<button onclick="map.src = 'data/find-transit-sector.html?station=' + input.value;return false;">Find</button>
 </body>
 </html>
