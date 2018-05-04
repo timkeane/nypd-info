@@ -31,7 +31,6 @@ var STYLE = {
 		R: '255,255,12',
 		Q: '255,255,12'
 	},
-	labeled: {},
 	zoom: function(resolution){
 		return nyc.ol.TILE_GRID.getZForResolution(resolution) - 8;
 	},
@@ -44,33 +43,33 @@ var STYLE = {
 		return new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,
-				width: feature.active ? (width * 2) : width
+				width: feature.active ? (width * 1.5) : width
 			})
 		});
 	},
 	text: function(feature, resolution){
-		var zoom = STYLE.zoom(resolution);
-		var selected = feature.selected;
-		var label = feature.label;
-		STYLE.labeled[zoom] = {};
-		if (zoom > 5 && !STYLE.labeled[zoom][label]){
-			STYLE.labeled[zoom][label] = true;
-			var offsetY = label.indexOf('\n') > -1 ? 4 : 0;
-			var font = 'px "Helvetica Neue", Helvetica, Arial, sans-serif'
-			font = feature.active ? ('bold ' + (zoom * 1.5) + font) : ('bold ' + zoom + font);
+		var active = feature.active;
+		if (active){
+			var zoom = STYLE.zoom(resolution);
+			var size = [5, 7, 9, 11, 13, 15, 16][zoom - 4] || 16;
+			var offsetX = [2, 2, 4, 4, 4, 6, 8, 10, 12, 16, 24][zoom - 4] * 2.5;
+			var label = feature.label;
+			var offsetY = label.split('\n').length * (offsetX / 2);
+			var font = size + 'px sans-serif';
+			window.font = font;
 			return new ol.style.Style({
 				text: new ol.style.Text({
 					text: label,
 					font: font,
 					textAlign: 'left',
 					textBaseline: 'top',
-					offsetX: 9,
+					offsetX: offsetX,
 					offsetY: offsetY,
 					fill: new ol.style.Fill({
-						color: feature.active ? '#000' : 'rgba(0,0,0,.7)'
+						color: '#000'
 					}),
 					stroke: new ol.style.Stroke({
-						width: 2,
+						width: size / 4,
 						color: '#fff'
 					})
 				})

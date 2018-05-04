@@ -1,6 +1,7 @@
 var GEOCLIENT_URL = 'https://maps.nyc.gov/geoclient/v1/search.json?app_key=E2857975AA57366BC&app_id=nyc-gov-nypd';
 
 var districtSectors = {};
+var stationNames = {};
 
 var map;
 var controls;
@@ -40,16 +41,23 @@ function sectorButtons(){
 	var sectors = districtSectors[selection.district];
 	$('#sectors').empty();
 	if (!sectors.none){
+		var sorted = [];
 		for (var sector in sectors){
+			sorted.push(sector);
+		}
+		sorted.sort();
+		$.each(sorted, function(_, sector){
 			var btn = $('<a class="ctl-btn" data-role="button">Sector </a>');
 			btn.append(sector)
 				.data('sector', sector)
 				.click(function(){
+					$('#sectors a').removeClass('active');
+					$(this).addClass('active');
 		      selection.sector = $(this).data('sector');
 		      zoomToStations();
 		    });
 			$('#sectors').append(btn).trigger('create');
-		}
+		});
 	}
 };
 
@@ -59,7 +67,10 @@ function zoomToStations(){
 	if (features.length){
 		var view = map.getView();
 		if (features.length > 1){
-			view.fit(activeStations.extent, {size: map.getSize(), duration: 500});
+			view.fit(activeStations.extent, {
+				size: map.getSize(), duration: 500,
+				constrainResolution: false
+			});
 		}else{
 			view.animate({
 				center: features[0].getGeometry().getCoordinates(),
@@ -70,22 +81,23 @@ function zoomToStations(){
 };
 
 function getActiveStations(){
-	activeStations = {
-		extent: ol.extent.createEmpty(),
-		features: []
-	};
-	$.each(stationSource.getFeatures(), function(){
-		this.active = false;
-		var districtMatch = this.get('DISTRICT') == selection.district;
-		var sectorMatch = this.get('SECTOR') == selection.sector || !selection.sector;
-		this.selected = this.getId() == selection.station;
+	var extent = ol.extent.createEmpty()
+	var features = [];
+
+	$.each(stationSource.getFeatures(), function(_, station){
+		station.active = false;
+		var districtMatch = station.get('DISTRICT') == selection.district;
+		var sectorMatch = station.get('SECTOR') == selection.sector || !selection.sector;
+		station.selected = station.getId() == selection.station;
 		if (districtMatch && sectorMatch){
-			this.active = true;
-			activeStations.features.push(this);
-			activeStations.extent = ol.extent.extend(
-				activeStations.extent, this.getGeometry().getExtent());
+			station.active = true;
+			features.push(station);
+			extent = ol.extent.extend(extent, station.getGeometry().getExtent());
 		}
 	});
+	var width = ol.extent.getWidth(extent);
+	extent = ol.extent.buffer(extent, width / 10);
+	activeStations = {extent: extent, features: features};
 	getActiveLines();
 };
 
@@ -109,21 +121,26 @@ var stationDecorator = {
 		districtSectors[district] = districtSectors[district] || {};
 		districtSectors[district][sector || 'none'] = true;
 
-		var wrapped = '';
-		var label = this.get('NAME').replace('/\//', ' ');
-		if (label.length > 12) {
-			label = label.replace(' /', '|');
-			$.each(label.split(' '), function(_, word){
-				var lines = wrapped.split('\n')
-				if (lines.length && (lines[lines.length - 1] + word).length > 12) {
-					wrapped += ('\n' + word + ' ');
-				}else{
-					wrapped += (word + ' ');
-				}
-			});
-			wrapped = wrapped.replace('|', '/');
+		var name = this.get('NAME');
+		this.label = '';
+		if (!stationNames[name]){
+			stationNames[name] = true;
+			var wrapped = '';
+			var label = name.replace('/\//', ' ');
+			if (label.length > 12) {
+				label = label.replace(' /', '|');
+				$.each(label.split(' '), function(_, word){
+					var lines = wrapped.split('\n')
+					if (lines.length && (lines[lines.length - 1] + word).length > 12) {
+						wrapped += ('\n' + word + ' ');
+					}else{
+						wrapped += (word + ' ');
+					}
+				});
+				wrapped = wrapped.replace('|', '/');
+			}
+			this.label = wrapped ? wrapped.trim() : label;
 		}
-		this.label = wrapped ? wrapped.trim() : label;
 	},
 	html: function(){
 		var props = this.getProperties()

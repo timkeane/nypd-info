@@ -97,8 +97,8 @@ div.sta-N, div.sta-Q, div.sta-R, div.sta-W {
 }
 #sectors {
 	position: fixed;
-	left: 3px;
-	bottom: 3px;
+	right: 3px;
+	bottom: -1px;
 }
 #sectors a.ctl-btn {
 	color: #fff;
@@ -107,4 +107,8 @@ div.sta-N, div.sta-Q, div.sta-R, div.sta-W {
 	height: 25px;
 	display: inline-block;
 	width: 75px;
+  margin-left: 3px;
+}
+#sectors a.ctl-btn.active {
+  background-color: #085095;
 }
