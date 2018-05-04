@@ -90,15 +90,13 @@ function getActiveStations(){
 };
 
 function getActiveLines(){
-	$.each(lineSource.getFeatures(), function(){
-		this.active = false;
-	});
-	$.each(activeStations.features, function(){
-		var station = this.getGeometry().getCoordinates();
-		var stationExt = [station[0] - 200, station[1] - 200, station[0] + 200, station[1] + 200];
-		$.each(lineSource.getFeatures(), function(){
-			if (!this.active){
-				this.active = this.getGeometry().intersectsExtent(stationExt);
+	$.each(lineSource.getFeatures(), function(_, line){
+		line.active = false;
+		$.each(activeStations.features, function(_, station){
+			var coord = station.getGeometry().getCoordinates();
+			var stationExt = [coord[0] - 200, coord[1] - 200, coord[0] + 200, coord[1] + 200];
+			if (!line.active){
+				line.active = line.getGeometry().intersectsExtent(stationExt);
 			}
 		});
 	});
