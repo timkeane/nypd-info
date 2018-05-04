@@ -7,7 +7,7 @@ var STYLE = {
 		4: '0,157,51',
 		5: '0,157,51',
 		6: '0,157,51',
-		
+
 		7: '200,1,204',
 
 		A: '14,104,154',
@@ -39,12 +39,12 @@ var STYLE = {
 		var zoom = STYLE.zoom(resolution);
 		var line = feature.get('RT_SYMBOL');
 		var color = STYLE.color[line];
-		color = feature.active ? ('rgb(' + color + ')') : ('rgba(' + color + ',.4)');
+		color = feature.active ? ('rgb(' + color + ')') : ('rgba(' + color + ',.3)');
 		width = [1, 1, 1, 1, 1, 2, 4, 6, 7, 8, 9, 10, 11, 12][zoom];
 		return new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: color,
-				width: feature.active ? (width * 1.5) : width
+				width: feature.active ? (width * 2) : width
 			})
 		});
 	},
@@ -56,7 +56,7 @@ var STYLE = {
 		if (zoom > 5 && !STYLE.labeled[zoom][label]){
 			STYLE.labeled[zoom][label] = true;
 			var offsetY = label.indexOf('\n') > -1 ? 4 : 0;
-			var font = 'px "Helvetica Neue", Helvetica, Arial, sans-serif' 
+			var font = 'px "Helvetica Neue", Helvetica, Arial, sans-serif'
 			font = feature.active ? ('bold ' + (zoom * 1.5) + font) : ('bold ' + zoom + font);
 			return new ol.style.Style({
 				text: new ol.style.Text({
@@ -84,11 +84,11 @@ var STYLE = {
 			image: new ol.style.Circle({
 				radius: feature.active ? (radius * 1.5) : radius,
 				stroke: new ol.style.Stroke({
-					color: feature.active ? '#000' : 'rgba(0,0,0,.5)',
+					color: feature.active ? '#000' : 'rgba(0,0,0,.4)',
 					width: radius > 2 ? 2 : 1
 				}),
 				fill: new ol.style.Fill({
-					color: feature.active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)'					
+					color: feature.active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'
 				})
 			})
 		});
