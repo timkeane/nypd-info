@@ -32,7 +32,7 @@ if (qstr){
 				nameField: 'NAME'
 			});
 			$(controls.input).attr('placeholder', 'Search for a station or address...');
-			}
+		}
 	}, 200);
 };
 
@@ -158,8 +158,8 @@ $(document).ready(function(){
 	controls = new nyc.ol.control.ZoomSearch(map);
 
 	lineSource = new ol.source.Vector({
-		url: 'subway_line.json',
-		format: new ol.format.GeoJSON()
+		url: 'subway-line.json',
+		format: new ol.format.TopoJSON()
 	});
 	lineLayer = new ol.layer.Vector({source: lineSource, style: STYLE.line});
 	map.addLayer(lineLayer);
