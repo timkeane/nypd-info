@@ -60,7 +60,7 @@ function sectorButtons(){
 		}
 		sorted.sort();
 		$.each(sorted, function(_, sector){
-			var btn = $('<a class="btn rad-all" data-role="button">Sector </a>');
+			var btn = $('<a class="btn rad-all" role="button" href="#">Sector </a>');
 			btn.append(sector)
 				.data('sector', sector)
 				.click(function(){
@@ -155,8 +155,11 @@ var stationDecorator = {
 			this.label = wrapped ? wrapped.trim() : label;
 		}
 	},
+	getName: function(){
+		return this.get('NAME');
+	},
 	html: function(){
-		var props = this.getProperties()
+		var props = this.getProperties();
 		var html = $('<div></div>');
 		var div = $('<div class="sta-name"></div>');
 		div.append(props.NAME);
@@ -168,7 +171,7 @@ var stationDecorator = {
 			html.append(div);
 		});
 		var sector = props.SECTOR.trim()
-		var btn = $('<button class="sector" role="buton"></button>');
+		var btn = $('<button class="btn rad-all" role="buton"></button>');
 		btn.append('District ' + props.DISTRICT);
 		if (sector){
 			btn.append(' Sector ' + sector);
@@ -236,7 +239,7 @@ $(document).ready(function(){
 	locationMgr.on('geocoded', function(location){
 		var id = location.data.STATION_ID;
 		if (id){
-			popup.show(stationSource.getFeatureById(id));
+			popup.showFeature(stationSource.getFeatureById(id));
 		}
 	});
 });
