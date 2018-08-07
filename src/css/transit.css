@@ -8,50 +8,34 @@ html, body,
   overflow: hidden;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-.ui-mobile-viewport .sta-name,
-.ui-mobile-viewport .nyc-user-location,
-.ui-mobile-viewport .sector,
-.ui-mobile-viewport .sector:hover {
+.sta-name,
+.nyc-user-location,
+.sector,
+.sector:hover {
   color: #085095;
   font-weight: bold;
 }
-.ui-mobile-viewport .fld-srch-container * {
+.srch * {
   color: #085095;
 }
-.popup-content {
-  width: auto;
-}
-.popup .sector {
-  display: block;
-}
-.ctl-btn.ui-btn, .ctl-btn.ui-btn:visited, a.popup-closer,
-div.fld-srch-container a.ui-input-clear:after,
-.fld-srch-container .ui-listview>.ui-li-static:hover {
+.btn, .btn-x,
+.srch .li:hover {
   background-color: rgba(8,80,149,0.5);
 }
-.ctl-btn.ui-btn:hover, a.popup-closer:hover,
-div.fld-srch-container a.ui-input-clear:hover:after {
+.btn:hover, .btn-x:hover {
   background-color: #085095;
 }
 .btn-geo {
   display: none;
 }
-.feature-tip {
+.f-tip {
 	padding: 5px;
 	font-weight: bold;
 	max-width: 220px;
 	background-color:rgba(255,255,255,0.9);
 }
-.feature-tip .sector {
+.f-tip .sector {
   display: none;
-}
-#fld-srch-container .ui-input-clear:after {
-  background-color: rgba(8,80,149,0.5);
-}
-#fld-srch-container .ui-input-clear:hover:after {
-  background-color: #085095;
-}div.subway div {
-  display: inline-block;
 }
 div.sta-icon {
 	display: inline-block;
@@ -101,7 +85,7 @@ div.sta-N, div.sta-Q, div.sta-R, div.sta-W {
 	right: 3px;
 	bottom: -1px;
 }
-#sectors a.ctl-btn {
+#sectors a.btn {
 	color: #fff;
 	padding-top: 8px;
 	padding-bottom: 3px;
@@ -110,6 +94,6 @@ div.sta-N, div.sta-Q, div.sta-R, div.sta-W {
 	width: 75px;
   margin-left: 3px;
 }
-#sectors a.ctl-btn.active {
+#sectors a.btn.active {
   background-color: #085095;
 }
