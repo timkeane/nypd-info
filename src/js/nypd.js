@@ -23,6 +23,8 @@ if (qstr){
 
 function mapClicked(event){
 	map.forEachFeatureAtPixel(event.pixel, function(feature, layer){
+		console.warn(feature);
+		
 		var pct = feature.get('PRECINCT');
 		if (pct){
 			window.parent.clickedPrecinct(pct);
@@ -121,15 +123,6 @@ $(document).ready(function(){
 				}]
 			})
 	});
-	// precinctSource.autoLoad().then(function(features){
-	// 	console.warn(features[0].getGeometry().getCoordinates()[0][0]);
-		
-	// 	var qstr = document.location.search;
-	// 	if (qstr){
-	// 		showPrecinct = qstr.split('=')[1];
-	// 		zoomToPrecinct(getPrecinct(showPrecinct));
-	// 	}
-	// });
 	precinctLayer = new ol.layer.Vector({source: precinctSource, style: STYLE.precinctStyle});
 	map.addLayer(precinctLayer);
 
@@ -188,6 +181,8 @@ $(document).ready(function(){
 						css: 'precinct-house',
 						html: '<b>' + feature.getName() + '</b><br>' + feature.getAddress()
 					};
+				}else if (feature.getName){
+					return {html: feature.getName()};
 				}
 			}
 		}]

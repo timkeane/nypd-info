@@ -4,7 +4,6 @@ html, body, #map {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 .f-tip, .sta-name, .srch * {
   color: #085095;
@@ -20,10 +19,10 @@ html, body, #map {
 	min-width: 70px;
 	margin-left: 3px;
 }
-.btn, .btn-sq, .clps h3:before, .btn-rnd, .srch ul li:hover{
+.btn, .btn-sq, .btn-rnd, .srch ul li:hover{
   background-color:rgba(39, 75, 114,.7);
 }
-.btn:hover, .btn-sq:hover, .clps h3:hover:before, .btn-rnd:hover, #sectors a.btn.focus {
+.btn:hover, .btn-sq:hover, .btn-rnd:hover, #sectors a.btn.focus {
   background-color:#274b72;
 }
 .srch input {
