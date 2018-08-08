@@ -53,8 +53,12 @@ if (qstr){
 function sectorButtons(){
 	var sectors = districtSectors[selection.district] || {};
 	$('#sectors').empty();
-	if (!sectors.none){
+	if (sectors.none){
+		$('#sectors').hide();
+	}else{
 		var sorted = [];
+		$('#sectors').show()
+			.attr('region', 'Select a sector for District ' + selection.district);
 		for (var sector in sectors){
 			sorted.push(sector);
 		}
@@ -64,8 +68,8 @@ function sectorButtons(){
 			btn.append(sector)
 				.data('sector', sector)
 				.click(function(){
-					$('#sectors a').removeClass('active');
-					$(this).addClass('active');
+					$('#sectors a').removeClass('focused');
+					$(this).addClass('focused');
 		      selection.sector = $(this).data('sector');
 		      zoomToStations();
 		    });
@@ -184,7 +188,6 @@ var stationDecorator = {
 };
 
 $(document).ready(function(){
-
 	map = new nyc.ol.Basemap({target: $('#map').get(0)});
 	map.labels.base.setOpacity(.5);
 
@@ -224,17 +227,15 @@ $(document).ready(function(){
 
 	popup = new nyc.ol.FeaturePopup({map: map, layers: [stationLayer]});
 
-	var style = new ol.style.Style({
+	locationMgr = new nyc.ol.LocationMgr({map: map, url: GEOCLIENT_URL});
+	zoomSearch = locationMgr.zoomSearch
+	locationMgr.mapLocator.layer.setStyle(new ol.style.Style({
 		image: new ol.style.Icon({
 			scale: 48 / 512,
 			size: [1024, 1024],
 			src: '../images/content/pages/icon.svg'
 		})
-	});
-
-	locationMgr = new nyc.ol.LocationMgr({map: map, url: GEOCLIENT_URL});
-	zoomSearch = locationMgr.zoomSearch
-	locationMgr.mapLocator.layer.setStyle(style);
+	}));
 
 	locationMgr.on('geocoded', function(location){
 		var id = location.data.STATION_ID;

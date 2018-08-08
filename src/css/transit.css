@@ -21,9 +21,9 @@ html, body, #map {
 	margin-left: 3px;
 }
 .btn, .btn-sq, .clps h3:before, .btn-rnd, .srch ul li:hover{
-  background-color:rgba(39, 75, 114,.6);
+  background-color:rgba(39, 75, 114,.7);
 }
-.btn:hover, .btn-sq:hover, .clps h3:hover:before, .btn-rnd:hover, #sectors a.btn.active {
+.btn:hover, .btn-sq:hover, .clps h3:hover:before, .btn-rnd:hover, #sectors a.btn.focus {
   background-color:#274b72;
 }
 .srch input {
