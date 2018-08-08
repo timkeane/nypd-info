@@ -5,7 +5,7 @@ html, body, #map {
   margin: 0;
   overflow: hidden;
 }
-.f-tip, .srch * {
+.f-tip, .f-tip *, .srch * {
   color: #085095;
 }
 .f-tip {
